@@ -3,21 +3,30 @@ print("start python ....")
 
 # Import relevant modules
 import sys
-import pandas as pd
 import numpy as np
 import scanpy as sc
 import anndata
 import torch
+import pkg_resources
+pkg_resources.require("scvi==1.1.2")
 import scvi
+pkg_resources.require("pandas==1.5.3")
+import pandas as pd
+
 from os import listdir
 from os.path import isfile, join
 print(scvi.__version__)
+print(pd.__version__)
 
 # get parameters
 query_path = sys.argv[1]
+# query_path = "C:/Users/julia/AppData/Local/Temp/RtmpAFN2Pq/temp_Control_RNA.h5ad"
 model_path = sys.argv[2]
+# model_path = "C:/Users/julia/AppData/Local/R/win-library/4.3/mapscvi/extdata/models/hypoMap_harmonized_scVI_model"
 latent_dim_path = sys.argv[3]
+# latent_dim_path = 'predicted_Control.txt'
 max_epochs = sys.argv[4]
+# max_epochs = 30
 
 # load query anndata
 #print("load query anndata")
