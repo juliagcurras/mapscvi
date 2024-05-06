@@ -277,6 +277,7 @@ project_query = function(query_seurat_object,reference_map_reduc,reference_map_u
       return.neighbor = TRUE,
       l2.norm = FALSE
     )
+    
 
     # make a uwot conformable object
     query.neighbor.uwot = list(idx = query.neighbor@nn.idx, dist = query.neighbor@nn.dist)
@@ -294,6 +295,9 @@ project_query = function(query_seurat_object,reference_map_reduc,reference_map_u
     )
 
     message(Sys.time(),": Add results to Seurat.." )
+    
+    # NEW CHANGE: add rownames - otherwise error - and then (line 311), the rownames were updated (just in case these are not the correspondent rownames)
+    rownames(transformed_query) <- rownames(query_seurat_object@meta.data)
 
     # make query dim red
     query_umap <- Seurat::CreateDimReducObject(
@@ -537,7 +541,7 @@ map_new_seurat_hypoMap = function(query_seurat_object,suffix="query",assay="RNA"
                                   global_seed=12345){
 
   # prepare
-  query_seurat_object = prepare_query(query_seurat_object,suffix=suffix,
+  query_seurat_object = prepare_query(object = query_seurat_object, suffix=suffix,
                                       assay=assay,subset_col=subset_col,
                                       subset_values=subset_values,normalize=TRUE,
                                       batch_var = "Batch_ID",global_seed=global_seed)
@@ -578,8 +582,9 @@ map_new_seurat_hypoMap = function(query_seurat_object,suffix="query",assay="RNA"
     message("No metadata provided. Cannot propagate labels!")
   }
   # project onto reference
-  query_seurat_object = project_query(query_seurat_object,reference_seurat@reductions[[reference_reduction]],
-                                      reference_seurat@reductions[[paste0("umap_",reference_reduction)]],
+  query_seurat_object = project_query(query_seurat_object = query_seurat_object,
+                                      reference_map_reduc = reference_seurat@reductions[[reference_reduction]],
+                                      reference_map_umap = reference_seurat@reductions[[paste0("umap_",reference_reduction)]],
                                       label_vec =label_vec,
                                       global_seed=global_seed)
 
