@@ -70,9 +70,9 @@ prepare_query = function(object,suffix="query",metadata =NULL,batch_var="Batch_I
   }
 
   # check that counts exists:
-  if(dim(query_seurat_object@assays[[assay]]@counts)[1]==0){stop("Matrix in @counts slot seems non-existent. Please provide a valid matrix with raw counts per cell in the @counts slot.")}
+  if(dim(query_seurat_object@assays[[assay]]@layers$counts)[1]==0){stop("Matrix in @counts slot seems non-existent. Please provide a valid matrix with raw counts per cell in the @counts slot.")}
   # check that counts does not contain float values
-  if(sum(query_seurat_object@assays[[assay]]@counts[,1])%%1!=0){message("Warning: Found float values in @counts slot. Please provide a valid matrix with raw counts per cell in the @counts slot.")}
+  if(sum(query_seurat_object@assays[[assay]]@layers$counts[,1])%%1!=0){message("Warning: Found float values in @counts slot. Please provide a valid matrix with raw counts per cell in the @counts slot.")}
 
   # subset with certain values of a metadata column if wanted
   if(subset_col %in% colnames(query_seurat_object@meta.data) & !is.null(subset_values)){
@@ -81,10 +81,10 @@ prepare_query = function(object,suffix="query",metadata =NULL,batch_var="Batch_I
     message("Subsetting query object to ",ncol(query_seurat_object)," cells from ",bef," cells" )
   }
   #normalize
-  if(dim(query_seurat_object@assays[[assay]]@data)[2] != dim(query_seurat_object@assays[[assay]]@counts)[2]){normalize=TRUE}
+  # if(dim(query_seurat_object@assays[[assay]]@layers$counts)[2] != dim(query_seurat_object@assays[[assay]]@counts)[2]){normalize=TRUE}
   if(normalize){
     message("Normalizing data")
-    query_seurat_object <- Seurat::NormalizeData(object = query_seurat_object,assay = assay, verbose = F,normalization.method = "LogNormalize",scale.factor = 10000)
+    query_seurat_object <- Seurat::NormalizeData(object = query_seurat_object, assay = assay, verbose = F,normalization.method = "LogNormalize",scale.factor = 10000)
   }
 
   # add cell id column
@@ -101,7 +101,7 @@ prepare_query = function(object,suffix="query",metadata =NULL,batch_var="Batch_I
   #query_seurat_object@reductions = list()
   #query_seurat_object@misc = list()
   dummy=matrix(data = as.numeric())
-  query_seurat_object@assays[[assay]]@scale.data <- dummy[,-1] # error is okay
+  query_seurat_object@assays[[assay]]@layers$scale.data <- dummy[,-1] # error is okay
 
   return(query_seurat_object)
 }
